@@ -5,7 +5,7 @@ export const viewcart = async (req,res) => {
     const {userid} = req.params;
 
     try {
-        const usercart = await Cart.findOne({user:userid}).populate("item.Product");
+        const usercart = await Cart.findOne({ user: userid }).populate("items.product");
         if(!usercart) return res.status(404).json({message: 'cart not found'});
 
         const totalprice = usercart.items.reduce((acc, item) => {
