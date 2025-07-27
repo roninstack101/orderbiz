@@ -1,5 +1,5 @@
-import Cart from "../models/cart.model";
-import Product from "../models/products.model";
+import Cart from "../models/cart.model.js";
+import Product from "../models/products.model.js";
 
 export const viewcart = async (req, res) => {
   const { userid } = req.params;

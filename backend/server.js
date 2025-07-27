@@ -2,17 +2,18 @@ import express from 'express';
 import dotenv from 'dotenv';
 import { connectDB } from './config/db.js';
 import userroutes from '../backend/routes/userroutes.js'
-import categoryroutes from '../backend/routes/categoryroutes.js'
+import shopcategoryroutes from '../backend/routes/shopcategoryroutes.js'
 import cors from 'cors';
 import productroutes from '../backend/routes/productroutes.js'
 import shoprequest from '../backend/routes/shoprequest.js';
 import shopAcceptRejectroutes from '../backend/routes/shopAcceptRejectroutes.js'
 import cartroutes from '../backend/routes/cartroutes.js';
-import productroutes from '../backend/routes/productroutes.js'
+// import productroutes from '../backend/routes/productroutes.js'
 
 const app = express();
 
 dotenv.config();
+
 app.use(cors());
 app.use(express.json());
 
@@ -25,7 +26,7 @@ app.use(express.json());
 
 app.use('/api/users', userroutes);
 
-app.use('/api/category', categoryroutes)
+app.use('/api/category', shopcategoryroutes)
 
 app.use('/api/products', productroutes)
 

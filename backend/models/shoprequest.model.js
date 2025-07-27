@@ -4,7 +4,7 @@ const shopRequestSchema = new mongoose.Schema({
   name: String,
   email: String,
   phone: String,
-  password: String, // hashed password
+  password: String,
   role: { type: String, enum: ["shop_owner"], default: "shop_owner" },
   shop: {
     name: String,
