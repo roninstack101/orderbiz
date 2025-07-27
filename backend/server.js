@@ -7,8 +7,8 @@ import cors from 'cors';
 import productroutes from '../backend/routes/productroutes.js'
 import shoprequest from '../backend/routes/shoprequest.js';
 import shopAcceptRejectroutes from '../backend/routes/shopAcceptRejectroutes.js'
-
-
+import cartroutes from '../backend/routes/cartroutes.js';
+import productroutes from '../backend/routes/productroutes.js'
 
 const app = express();
 
@@ -32,6 +32,10 @@ app.use('/api/products', productroutes)
 app.use('/api/shopenquiries', shoprequest)
 
 app.use('/api/shoprequest', shopAcceptRejectroutes)
+
+app.use('/api/cart', cartroutes)
+
+app.use('/api/product', productroutes)
 
 // console.log(process.env.MONGO_URI);
 

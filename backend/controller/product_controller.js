@@ -2,7 +2,7 @@ import Product from "../models/products.model.js";
 
 export const getproductsbyshop = async (req,res) => {
     try {
-        const shopid = app.params.shopId;
+        const shopid = req.params;
     const products = await Product.find({ shop:shopId });
     
     res.status(200).json(products)
@@ -46,9 +46,9 @@ export const createProduct = async (req, res) => {
 };
 
 
-const deleteProduct = async (req,res) => {
+export const deleteProduct = async (req,res) => {
     try {
-        const {id} = req.param;
+        const {id} = req.params;
         const deleted = await Product.findByIdAndDelete(id);
         if (!deleted) {
             return res.status(404).json({message:"Product nod found "})
@@ -60,3 +60,26 @@ const deleteProduct = async (req,res) => {
     }
     
 };  
+
+export const updateproduct = async (req,res) => {
+  const {productId} = req.params;
+  const updates = req.body;
+
+  try {
+    const updatedproduct = await Product.findByIdAndUpdate(
+      productId,
+      updates,
+      { new : true, runValidators : true}
+    );
+
+    if(!updatedproduct) return res.status(404).json({message: 'product not found'});
+
+    res.status(200).json({message : 'Product updated', product : updatedproduct});
+  } catch (error) {
+     res.status(500).json({
+      message: 'Error updating product',
+      error: error.message
+    }); 
+  }
+  
+};

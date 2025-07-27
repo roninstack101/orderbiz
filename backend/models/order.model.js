@@ -27,14 +27,14 @@ const orderSchema = new mongoose.Schema({
     type: Number, 
     required: true 
   },
-  status: {
-    type: String,
-    enum: ['pending', 'accepted', 'rejected', 'ready-for-pickup', 'completed'],
-    default: 'pending'
-  },
   qrCode: {
     type: String, // link to QR image
     default: null
+  },
+  status: {
+    type: String,
+    enum: ['pending', 'accepted', 'declined'],
+    default: 'pending'
   },
   createdAt: {
     type: Date,
