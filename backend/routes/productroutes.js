@@ -3,7 +3,7 @@ import { createProduct, deleteProduct, getproductsbyshop, updateproduct } from '
 
 const router =  express.Router();
 
-router.get('/shopproduct/:shopId', getproductsbyshop);
+router.get('/shopproduct/:shopid', getproductsbyshop);
 
 router.post('/add', createProduct);
 

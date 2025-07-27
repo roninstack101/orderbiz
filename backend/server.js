@@ -26,7 +26,7 @@ app.use(express.json());
 
 app.use('/api/users', userroutes);
 
-app.use('/api/category', shopcategoryroutes)
+app.use('/api/shopcategory', shopcategoryroutes)
 
 app.use('/api/products', productroutes)
 

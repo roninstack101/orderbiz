@@ -57,10 +57,10 @@ export const shopApproval = async (req,res) => {
         
     
 export const ShopDecline = async (req,res) => {
-  const {Id} = req.params;
+  const {requestId} = req.params;
 
     try {
-        const deleted = await Shoprequest.findByIdAndDelete(Id);
+        const deleted = await Shoprequest.findByIdAndDelete(requestId);
         if(!deleted) return res.status(404).json({ message: "Request not found" });
 
           res.status(200).json({ message: "Shop request rejected and deleted" });

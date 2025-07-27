@@ -3,7 +3,7 @@ import express from 'express';
 
 const router = express.Router();
 
-router.get("/getcart", viewcart);
+router.get("/getcart/:userid", viewcart);
 
 router.post("/addcart", addtocart);
 
