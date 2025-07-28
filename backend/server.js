@@ -9,7 +9,7 @@ import shoprequest from '../backend/routes/shoprequest.js';
 import shopAcceptRejectroutes from '../backend/routes/shopAcceptRejectroutes.js'
 import cartroutes from '../backend/routes/cartroutes.js';
 // import productroutes from '../backend/routes/productroutes.js'
-
+import orderroutes from '../backend/routes/orderroutes.js'
 const app = express();
 
 dotenv.config();
@@ -37,6 +37,8 @@ app.use('/api/shoprequest', shopAcceptRejectroutes)
 app.use('/api/cart', cartroutes)
 
 app.use('/api/product', productroutes)
+
+app.use('/api/order', orderroutes)
 
 // console.log(process.env.MONGO_URI);
 

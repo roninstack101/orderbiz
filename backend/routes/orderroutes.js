@@ -1,13 +1,14 @@
 import express from 'express';
+import { acceptorder, createOrder, getorderbystatus, rejectorder } from '../controller/order_controller.js';
 
 const router =  express.Router();
 
-router.get('/shopproduct/:shopid', );
+router.get('/getorder/:shopId', getorderbystatus);
 
-router.post('/add', );
+router.post('/create', createOrder);
 
-router.delete("/delete/:productId", );
+router.put("/accept/:orderId", acceptorder);
 
-router.put('/update/:productId', );
+router.put("/reject/:orderId", rejectorder);
 
 export default router;

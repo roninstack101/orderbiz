@@ -24,8 +24,7 @@ const orderSchema = new mongoose.Schema({
     }
   ],
   totalPrice: { 
-    type: Number, 
-    required: true 
+    type: Number
   },
   qrCode: {
     type: String, // link to QR image
