@@ -7,7 +7,7 @@ export const submitShoprequest = async (req,res) => {
     try {
         const existingRequest = await Shoprequest.findOne({email});
         if(existingRequest)
-          return  res.status(400).json({Message: 'Request already submitted'});
+          return  res.status(400).json({message: 'Request already submitted'});
 
         const hashedpassword = await bcrypt.hash(password,10);
         const request = new Shoprequest ({name, email, phone, password: hashedpassword, shop});

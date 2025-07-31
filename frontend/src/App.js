@@ -1,17 +1,21 @@
 import React from 'react';
 // import './App.css';
-import Registration from './components/registration';
-import LoginPage from './components/login';
-import RegistrationPage from './components/login';
+
+import RegistrationPage from './components/registrationpage';
+import LoginPage from './components/loginpage';
+import Dashboard from './components/userdashboard';
+import EcommerceDashboard from './components/userdashboard';
+import { Router, BrowserRouter,Route, Routes } from 'react-router-dom';
 
 
 function App() {
   return (
-    <div className="App">
-     {/* <Registration/> */}
-     {/* <LoginPage/> */}
-     <RegistrationPage/>
-    </div>
+     <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<EcommerceDashboard />} />
+        {/* <Route path="/shop/:id" element={<ShopPage />} /> */}
+      </Routes>
+    </BrowserRouter>
   );
 }
 

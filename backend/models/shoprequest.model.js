@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+// models/Shoprequest.js
 
 const shopRequestSchema = new mongoose.Schema({
   name: String,
@@ -11,6 +11,17 @@ const shopRequestSchema = new mongoose.Schema({
     category: String,
     address: String,
     description: String,
+    location: {
+      type: {
+        type: String,
+        enum: ['Point'],
+        default: 'Point'
+      },
+      coordinates: {
+        type: [Number], // [lng, lat]
+        required: true
+      }
+    }
   },
   status: {
     type: String,
@@ -19,6 +30,3 @@ const shopRequestSchema = new mongoose.Schema({
   },
   createdAt: { type: Date, default: Date.now },
 });
-
-const Shoprequest = mongoose.model("Shoprequest", shopRequestSchema);
-export default Shoprequest;
