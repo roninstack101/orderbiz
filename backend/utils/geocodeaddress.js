@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const GEOCODE_API_KEY = "8cc651ac10ff472fad94f58c8c00bd45"; // Replace this with your real key
+const GEOCODE_API_KEY = process.env.OPENCAGE_API_KEY; // Replace this with your real key
 
 export const geocodeAddress = async (address) => {
   try {
