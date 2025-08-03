@@ -87,3 +87,35 @@ export const clearcart = async (req, res) => {
       .json({ message: "Error clearing cart", error: error.message });
   }
 };
+
+export const removeFromCart = async (req, res) => {
+  const { userid, productid } = req.body;
+
+  try {
+    const cart = await Cart.findOne({ user: userid });
+    if (!cart) {
+      return res.status(404).json({ message: "Cart not found" });
+    }
+
+    const index = cart.items.findIndex(
+      (item) => item.product.toString() === productid
+    );
+
+    if (index >= 0) {
+      if (cart.items[index].quantity > 1) {
+        cart.items[index].quantity -= 1;
+      } else {
+        cart.items.splice(index, 1); // remove item if quantity is 1
+      }
+
+      await cart.save();
+      return res.status(200).json({ message: "Item updated", cart });
+    } else {
+      return res.status(404).json({ message: "Item not found in cart" });
+    }
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error in removing item", error: error.message });
+  }
+};

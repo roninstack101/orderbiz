@@ -1,12 +1,13 @@
 import express from 'express' ;
-import { getShopRequest, shopApproval, ShopDecline } from '../controller/shopAcceptReject_controller.js';
+import {  getShopRequest, shopApproval, ShopDecline } from '../controller/shopAcceptReject_controller.js';
+import { authenticateUser } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-router.get('/getShoprequest', getShopRequest);
+router.get('/getShoprequest',authenticateUser, getShopRequest);
 
-router.put('/shopapproval/:requestId', shopApproval);
+router.put('/shopapproval/:requestId',authenticateUser, shopApproval);
 
-router.delete('/shopdecline/:requestId', ShopDecline);
+router.delete('/shopdecline/:requestId',authenticateUser, ShopDecline);
 
 export default router;

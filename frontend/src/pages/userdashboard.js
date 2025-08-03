@@ -1,35 +1,23 @@
-import React, { useEffect, useState } from "react";
-import { UserCircle } from "lucide-react";
+import React, { useEffect, useState} from "react";
+import { UserCircle, Funnel} from "lucide-react";
 import bgImage from "../assets/counter.png";
-import ShopCard from "./shopcard";
+import ShopCard from "../components/shopcard";
 import bgImag from "../assets/counter.png";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { FilterIcon } from "@hugeicons/core-free-icons";
+// import { HugeiconsIcon } from "@hugeicons/react";
+// import { FilterIcon } from "@hugeicons/core-free-icons";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-function haversineDistance(lat1, lon1, lat2, lon2) {
-  const toRad = (x) => (x * Math.PI) / 180;
-  const R = 6371000; // meters
-  const dLat = toRad(lat2 - lat1);
-  const dLon = toRad(lon2 - lon1);
-  const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(toRad(lat1)) *
-      Math.cos(toRad(lat2)) *
-      Math.sin(dLon / 2) ** 2;
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
-}
 
-export default function EcommerceDashboard() {
+export default function UserDashboard() {
   const [shops, setShops] = useState([]);
-  const [filteredShops, setFilteredShops] = useState([]);
   const [categories, setCategories] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [userLocation, setUserLocation] = useState(null);
-  const [radius, setRadius] = useState(500);
+  const [radius, setRadius] = useState(5000);
   const [showModal, setShowModal] = useState(false);
+    const navigate = useNavigate();
 
   // Fetch categories
   useEffect(() => {
@@ -38,15 +26,7 @@ export default function EcommerceDashboard() {
     );
   }, []);
 
-  // Fetch all shops
-  useEffect(() => {
-    axios.get("http://localhost:4000/api/shopcategory/shops").then((res) => {
-      const approvedShops = res.data.filter((shop) => shop.isApproved);
-      setShops(approvedShops);
-    });
-  }, []);
-
-  // Get user location on mount
+  // Get user's location once
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
@@ -58,35 +38,36 @@ export default function EcommerceDashboard() {
     );
   }, []);
 
-  // Filter logic (by search, category, and distance)
+  // Fetch filtered shops from backend
   useEffect(() => {
     if (!userLocation) return;
 
-    const filtered = shops.filter((shop) => {
-      const matchSearch = shop.name
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase());
-      const matchCategory =
-        !selectedCategory || shop.category === selectedCategory;
+    axios
+      .get("http://localhost:4000/api/shopcategory/nearby", {
+        params: {
+          lat: userLocation.lat,
+          lng: userLocation.lon,
+          distance: radius,
+        },
+      })
+      .then((res) => {
+        const nearby = res.data;
 
-      if (!shop.location || !shop.location.lat || !shop.location.lon)
-        return false;
+        const filtered = nearby.filter((shop) => {
+          const matchSearch = shop.name
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase());
+          const matchCategory =
+            !selectedCategory || shop.category === selectedCategory;
+          return matchSearch && matchCategory;
+        });
 
-      const dist = haversineDistance(
-        userLocation.lat,
-        userLocation.lon,
-        shop.location.lat,
-        shop.location.lon
-      );
-
-      return matchSearch && matchCategory && dist <= radius;
-    });
-
-    setFilteredShops(filtered);
-  }, [shops, searchTerm, selectedCategory, radius, userLocation]);
+        setShops(filtered);
+      });
+  }, [searchTerm, selectedCategory, userLocation, radius]);
 
   const handleShopClick = (shopId) => {
-    window.location.href = `/shop/${shopId}`;
+    navigate(`/shop/${shopId}`);
   };
 
   return (
@@ -106,7 +87,7 @@ export default function EcommerceDashboard() {
             <button
               onClick={() => {
                 localStorage.clear();
-                window.location.href = "/";
+                navigate("/");
               }}
               className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
             >
@@ -160,13 +141,11 @@ export default function EcommerceDashboard() {
       <div className="flex-grow overflow-y-auto bg-gray-100 z-0">
         <h1 className="text-2xl font-bold px-4 pt-6 pb-2">Nearby Shops</h1>
         <div className="p-4 bg-gray-100 min-h-[400px]">
-          {filteredShops.length === 0 ? (
-            <p className="text-center text-gray-500 mt-20">
-              No shops available.
-            </p>
+          {shops.length === 0 ? (
+            <p className="text-center text-gray-500 mt-20">No shops available.</p>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-4">
-              {filteredShops.map((shop) => (
+              {shops.map((shop) => (
                 <div
                   key={shop._id}
                   onClick={() => handleShopClick(shop._id)}
@@ -190,9 +169,9 @@ export default function EcommerceDashboard() {
       <div className="fixed bottom-4 right-4 z-30">
         <button
           onClick={() => setShowModal(true)}
-          className="p-4 bg-[#0067D8] text-white rounded-full shadow-md"
+          className="fixed bottom-6 right-6 bg-blue-400 text-white p-4 rounded-full shadow-lg hover:bg-blue-500"
         >
-          <HugeiconsIcon icon={FilterIcon} size={32} strokeWidth={1} />
+         <Funnel className="w-6 h-6"/>
         </button>
       </div>
 
@@ -205,7 +184,9 @@ export default function EcommerceDashboard() {
               <button onClick={() => setShowModal(false)}>✕</button>
             </div>
             <div className="mb-4">
-              <label className="block mb-2 text-sm">Search Radius: {radius} meters</label>
+              <label className="block mb-2 text-sm">
+                Search Radius: {radius} meters
+              </label>
               <input
                 type="range"
                 min={100}
@@ -222,3 +203,5 @@ export default function EcommerceDashboard() {
     </div>
   );
 }
+
+

@@ -1,14 +1,15 @@
 import express from 'express';
 import { acceptorder, createOrder, getorderbystatus, rejectorder } from '../controller/order_controller.js';
+import { authenticateUser } from '../middleware/authMiddleware.js';
 
 const router =  express.Router();
 
-router.get('/getorder/:shopId', getorderbystatus);
+router.get('/getorder/:shopId',authenticateUser, getorderbystatus);
 
-router.post('/create', createOrder);
+router.post('/create',authenticateUser, createOrder);
 
-router.put("/accept/:orderId", acceptorder);
+router.put("/accept/:orderId",authenticateUser, acceptorder);
 
-router.put("/reject/:orderId", rejectorder);
+router.put("/reject/:orderId",authenticateUser, rejectorder);
 
 export default router;

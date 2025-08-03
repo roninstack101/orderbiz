@@ -3,12 +3,15 @@ import axios from "axios";
 import image1 from "../assets/image1.png";
 import image2 from "../assets/image2.png";
 import image3 from "../assets/image3.png";
+import { useNavigate } from "react-router-dom";
 
-export default function RegistrationPage() {
+export default function LoginPage() {
   const [currentImage, setCurrentImage] = useState(0);
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
 
+
+  const navigate = useNavigate();
   
   
   const images = [image1, image2, image3];
@@ -35,16 +38,23 @@ export default function RegistrationPage() {
       setemail("");
       setpassword("");
 
-      const { role } = res.data;
-      localStorage.setItem("role", role);
+      const { token, user } = res.data;
+      // console.log( token);
+      localStorage.setItem("role", user.role);
+      localStorage.setItem("token", token);
+    localStorage.setItem("userid", user.userId);
 
-      if (role === "admin") {
-        window.location.href = "/admin/dashboard";
-      } else if (role === "shop") {
-        window.location.href = "/shop/dashboard";
+       if (token && user.role) {
+      if (user.role === "admin") {
+        navigate("/admin/dashboard");
+      } else if (user.role === "shop_owner") {
+        navigate("/shop/dashboard");
       } else {
-        window.location.href = "/user/dashboard";
+        navigate("/user/dashboard");
       }
+    } else {
+      alert("Invalid login data received.");
+    }
     } catch (err) {
       alert(err.response?.data?.message || "Login failed.");
     }
@@ -64,7 +74,7 @@ export default function RegistrationPage() {
 
             return (
               <img
-                key={index}
+                key={index} 
                 src={img}
                 alt={`Slide ${index}`}
                 className={`
@@ -113,7 +123,7 @@ export default function RegistrationPage() {
 
           <p className="text-sm text-center mt-4 text-gray-500">
             Don't have an account?{" "}
-            <a href="/login" className="text-[#f76673] font-medium hover:underline">Sign Up</a>
+            <a href="/register" className="text-[#f76673] font-medium hover:underline">Sign Up</a>
           </p>
         </div>
       </div>
