@@ -43,7 +43,7 @@ export default function UserDashboard() {
     if (!userLocation) return;
 
     axios
-      .get("http://localhost:4000/api/shopcategory/nearby", {
+      .get("http://localhost:4000/api/shopcategory/shops", {
         params: {
           lat: userLocation.lat,
           lng: userLocation.lon,

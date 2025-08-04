@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key';
+// const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key';
 
 export const authenticateUser = (req, res, next) => {
   const authHeader = req.headers.authorization;
@@ -11,8 +11,9 @@ export const authenticateUser = (req, res, next) => {
 
   const token = authHeader.split(' ')[1];
 
+
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded; // you can access req.user in your route/controller
     next();
   } catch (error) {

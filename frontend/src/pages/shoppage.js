@@ -1,20 +1,48 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { ShoppingCart, UserCircle } from "lucide-react";
 import image from '../assets/counter.png';
-import ProductCard from "../components/productcard";
+import ProductCard from "../components/userproductcard";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
 
-export default function ShopPage() {
-  const {shopId} = useParams();
-  const [shop, setShop] = useState(null);
-  const [products, setProducts] = useState([]);
-  const [cart, setCart] = useState([]);
-  const navigate = useNavigate();
 
-  const userId = localStorage.getItem("userid");
-  const token  = localStorage.getItem("token");
+export default function ShopPage() {
+    const { shopId } = useParams();
+    const [shop, setShop] = useState(null);
+    const [products, setProducts] = useState([]); // This will be our master list
+    const [cart, setCart] = useState([]);
+    const navigate = useNavigate();
+
+    // 2. ✅ Add state for search and sort
+    const [searchTerm, setSearchTerm] = useState("");
+    const [sortBy, setSortBy] = useState("default");
+
+    const userId = localStorage.getItem("userid");
+    const token = localStorage.getItem("token");
+
+  const fetchCart = async () => {
+    if (!userId || !token) return; // No user, no cart
+
+    try {
+        const config = { headers: { Authorization: `Bearer ${token}` } };
+        const res = await axios.get(`http://localhost:4000/api/cart/getcart/${userId}`, config);
+
+        // console.log("1. Raw API Response:", res.data);
+
+        
+        // The API returns { groupedByShop: [...] }. We need to flatten it.
+        const allItems = res.data.groupedByShop.flatMap(shopGroup => shopGroup.items);
+        //  console.log("2. Flattened Cart Items:", allItems);
+
+
+        setCart(allItems);
+
+    } catch (err) {
+        console.error("Failed to fetch cart", err);
+        setCart([]); // Set to empty array on error
+    }
+};
 
   useEffect(() => {
     if (!shopId) return;
@@ -29,37 +57,56 @@ export default function ShopPage() {
   }, [shopId]);
 
   useEffect(() => {
-    if (userId) {
-      axios.get(`http://localhost:4000/api/cart/getcart/${userId}`, {
-          headers: {
-    Authorization: `Bearer ${token}`,
-  },
-      })
-        .then(res => setCart(res.data.items || []))
-        .catch(() => setCart([]));
-    }
-  }, [userId]);
+    fetchCart();
+}, [userId, token]);
 
-  const updateCart = (productId, type) => {
+  const updateCart = async (productId, type) => {
     const url = type === "add" ? "http://localhost:4000/api/cart/addcart" : "http://localhost:4000/api/cart/remove";
-    axios.post(url, {
-      userid: userId,
-      productid: productId,
-      quantity: 1,
-       headers: {
-    Authorization: `Bearer ${token}`,
-  },
-    })
-      .then((res) => setCart(res.data.cart.items))
-      .catch((err) => console.error("Cart update failed", err));
-  };
+    const data = { userid: userId, productid: productId, quantity: 1 };
+    const config = { headers: { Authorization: `Bearer ${token}` } };
+
+    try {
+        await axios.post(url, data, config);
+        // ✅ After the update is successful, just refetch the whole cart
+        fetchCart();
+    } catch (err) {
+        console.error("Cart update failed", err);
+    }
+};
+
+ const displayedProducts = useMemo(() => {
+        let filteredProducts = [...products];
+
+        // Apply search filter
+        if (searchTerm) {
+            filteredProducts = filteredProducts.filter(product =>
+                product.name.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+        }
+
+        // Apply sorting
+        switch (sortBy) {
+            case 'price-asc':
+                filteredProducts.sort((a, b) => a.price - b.price);
+                break;
+            case 'price-desc':
+                filteredProducts.sort((a, b) => b.price - a.price);
+                break;
+            default:
+                // Default sort (e.g., by name or no specific order)
+                break;
+        }
+
+        return filteredProducts;
+    }, [products, searchTerm, sortBy]); // Recalculate only when these change
+
 
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
      <div className="flex justify-between items-center bg-[#0067D8] py-4 mb-6 px-6 z-20">
         <h1 className="text-white font-bold text-3xl">OrderBiz</h1>
-        <div className="relative group">
+        <div className="relative group z-10">
           <UserCircle className="w-6 h-6 text-white cursor-pointer" />
           <div className="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
             <a
@@ -99,38 +146,57 @@ export default function ShopPage() {
         </div>
       </div>
 
-      {/* Product Grid */}
-      <div className="px-6 pt-6 pb-20">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold">Products</h3>
-          <select className="px-2 py-1 border rounded">
-            <option>Sort by</option>
-            <option>Name</option>
-            <option>Price</option>
-          </select>
-        </div>
+       {/* Product Grid */}
+            <div className="px-6 pt-6 pb-20">
+                {/* 4. ✅ Update the JSX with search and sort controls */}
+                <div className="flex flex-col md:flex-row items-center justify-between mb-4 gap-4">
+                    <h3 className="text-lg font-semibold">Products</h3>
+                    <div className="flex items-center gap-2 w-full md:w-auto">
+                        <input
+                            type="text"
+                            placeholder="Search products..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="px-4 py-2 border rounded-full w-full md:w-auto"
+                        />
+                        <select 
+                            value={sortBy}
+                            onChange={(e) => setSortBy(e.target.value)}
+                            className="px-4 py-2 border rounded-full bg-white"
+                        >
+                            <option value="default">Sort by</option>
+                            <option value="price-asc">Price (lowest first)</option>
+                            <option value="price-desc">Price (highest first)</option>
+                        </select>
+                    </div>
+                </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {products.length > 0 ? (
-            products.map((product) => {
-              const cartItem = cart.find((item) => item.product._id === product._id);
-              return (
-                <ProductCard
-                  key={product._id}
-                  product={product}
-                  quantity={cartItem?.quantity || 0}
-                  onAdd={() => updateCart(product._id, "add")}
-                  onRemove={() => updateCart(product._id, "remove")}
-                />
-              );
-            })
-          ) : (
-            Array(8).fill(0).map((_, i) => (
-              <div key={i} className="w-full h-32 bg-gray-200 rounded-md animate-pulse"></div>
-            ))
-          )}
-        </div>
-      </div>
+                {/* 5. ✅ Update the grid to use the new list */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                    {products.length > 0 ? (
+                        displayedProducts.length > 0 ? (
+                            displayedProducts.map((product) => {
+                                const cartItem = cart.find((item) => item.product._id === product._id);
+                                return (
+                                    <ProductCard
+                                        key={product._id}
+                                        product={product}
+                                        quantity={cartItem?.quantity || 0}
+                                        onAdd={() => updateCart(product._id, "add")}
+                                        onRemove={() => updateCart(product._id, "remove")}
+                                    />
+                                );
+                            })
+                        ) : (
+                            <p className="col-span-full text-center text-gray-500">No products match your search.</p>
+                        )
+                    ) : (
+                        Array(8).fill(0).map((_, i) => (
+                            <div key={i} className="w-full h-32 bg-gray-200 rounded-md animate-pulse"></div>
+                        ))
+                    )}
+                </div>
+            </div>
 
       {/* Floating Cart Button */}
       <button

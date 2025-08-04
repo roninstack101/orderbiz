@@ -4,9 +4,9 @@ import { authenticateUser } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-router.get('/getShoprequest',authenticateUser, getShopRequest);
+router.get('/getShoprequest',getShopRequest);
 
-router.put('/shopapproval/:requestId',authenticateUser, shopApproval);
+router.put('/shopapproval/:requestId',shopApproval);
 
 router.delete('/shopdecline/:requestId',authenticateUser, ShopDecline);
 

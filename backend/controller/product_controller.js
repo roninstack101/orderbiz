@@ -14,12 +14,11 @@ export const getproductsbyshop = async (req,res) => {
 }
 
 
-
 export const createProduct = async (req, res) => {
   try {
     const { shop, name, description, price, quantity, category } = req.body;
+    const image = req.file ? req.file.path : ""; // Cloudinary URL
 
-    // Validate required fields
     if (!shop || !name || !price || !quantity) {
       return res.status(400).json({ message: "Missing required fields" });
     }
@@ -30,22 +29,24 @@ export const createProduct = async (req, res) => {
       description,
       price,
       quantity,
-      category
+      category,
+      image,
     });
 
     await newProduct.save();
 
     res.status(201).json({
       message: "Product created successfully",
-      product: newProduct
+      product: newProduct,
     });
   } catch (error) {
     res.status(500).json({
       message: "Error creating product",
-      error: error.message
+      error: error.message,
     });
   }
 };
+
 
 
 export const deleteProduct = async (req,res) => {
@@ -63,25 +64,33 @@ export const deleteProduct = async (req,res) => {
     
 };  
 
-export const updateproduct = async (req,res) => {
-  const {productId} = req.params;
+export const updateproduct = async (req, res) => {
+  const { productId } = req.params;
   const updates = req.body;
+
+  if (req.file) {
+    updates.image = req.file.path; // Cloudinary URL
+  }
 
   try {
     const updatedproduct = await Product.findByIdAndUpdate(
       productId,
       updates,
-      { new : true, runValidators : true}
+      { new: true, runValidators: true }
     );
 
-    if(!updatedproduct) return res.status(404).json({message: 'product not found'});
+    if (!updatedproduct) {
+      return res.status(404).json({ message: "Product not found" });
+    }
 
-    res.status(200).json({message : 'Product updated', product : updatedproduct});
+    res.status(200).json({
+      message: "Product updated",
+      product: updatedproduct,
+    });
   } catch (error) {
-     res.status(500).json({
-      message: 'Error updating product',
-      error: error.message
-    }); 
+    res.status(500).json({
+      message: "Error updating product",
+      error: error.message,
+    });
   }
-  
 };

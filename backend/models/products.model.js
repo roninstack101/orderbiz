@@ -7,7 +7,12 @@ const productSchema = new mongoose.Schema({
     price: {type: Number, required : true},
     quantity: {type: Number, required : true},
     category: String,
-    isAvailable: {type: Boolean, default: true}
+    isAvailable: {type: Boolean, default: true},
+     image: {
+  type: String,
+  required: false, // optional
+  default: "", // or placeholder
+},
 });
 
 const Product = mongoose.model('Product', productSchema);

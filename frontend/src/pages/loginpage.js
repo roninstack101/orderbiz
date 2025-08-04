@@ -4,6 +4,7 @@ import image1 from "../assets/image1.png";
 import image2 from "../assets/image2.png";
 import image3 from "../assets/image3.png";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 export default function LoginPage() {
   const [currentImage, setCurrentImage] = useState(0);
@@ -33,7 +34,7 @@ export default function LoginPage() {
         password,
       });
 
-      alert(res.data.message);
+      toast.success(res.data.message);
 
       setemail("");
       setpassword("");
@@ -56,7 +57,7 @@ export default function LoginPage() {
       alert("Invalid login data received.");
     }
     } catch (err) {
-      alert(err.response?.data?.message || "Login failed.");
+      toast.error(err.response?.data?.message || "Login failed.");
     }
   };
   return (

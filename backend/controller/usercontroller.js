@@ -50,7 +50,8 @@ export const loginuser = async (req,res) => {
             userId: user._id,
             name: user.name,
             role: user.role,
-            email: user.email
+            email: user.email,
+            shop: user.shop 
         },
         token
     });
@@ -60,47 +61,44 @@ export const loginuser = async (req,res) => {
     }
 };
 
-
-
-export const getprofile = async (req, res) => {
-    const {userid} = req.params;
+export const getUserProfile = async (req, res) => {
   try {
-    const user = await User.findById(userid).select('-password');
-    if (!user) return res.status(404).json({ message: 'User not found' });
+    const userId = req.user.userID;
+    const user = await User.findById(userId).select("-password");
 
     let shop = null;
-    if (user.isShopOwner && user.shopId) {
-      shop = await Shop.findById(user.shopId);
+    if (user.role === "shop_owner") {
+      shop = await Shop.findOne({ owner: userId }).select("name category image isApproved");
     }
 
-    res.status(200).json({ user, shop });
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to fetch profile', error: error.message });
+    res.json({ user, shop });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch profile", error: err.message });
   }
 };
 
-export const updateProfile = async (req, res) => {
-    const {userid} = req.params;
+export const updateUserProfile = async (req, res) => {
   try {
-    const allowedFields = ['name', 'email', 'phone'];
-    const updates = {};
+    const userId = req.user.userID;
+    const { name, email, phone, shopImage } = req.body;
 
-    for (const field of allowedFields) {
-      if (req.body[field] !== undefined) {
-        updates[field] = req.body[field];
-      }
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { name, email, phone },
+      { new: true, runValidators: true }
+    ).select("-password");
+
+    let shop = null;
+    if (shopImage) {
+      shop = await Shop.findOneAndUpdate(
+        { owner: userId },
+        { image: shopImage },
+        { new: true }
+      ).select("image");
     }
 
-    const updatedUser = await User.findByIdAndUpdate(
-      userid,
-      { $set: updates },
-      { new: true, runValidators: true }
-    ).select('-password');
-
-    if (!updatedUser) return res.status(404).json({ message: 'User not found' });
-
-    res.status(200).json({ message: 'Profile updated', user: updatedUser });
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to update profile', error: error.message });
+    res.json({ user, shop });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to update profile", error: err.message });
   }
 };

@@ -2,24 +2,68 @@ import Cart from "../models/cart.model.js";
 import Product from "../models/products.model.js";
 
 export const viewcart = async (req, res) => {
-  const { userid } = req.params;
+    const { userid } = req.params;
 
-  try {
-    const usercart = await Cart.findOne({ user: userid }).populate(
-      "items.product"
-    );
-    if (!usercart) return res.status(404).json({ message: "cart not found" });
+    try {
+        const usercart = await Cart.findOne({ user: userid })
+            .populate({
+                path: 'items.product',
+                populate: {
+                    path: 'shop',
+                    model: 'Shop',
+                    select: 'name' // Select any shop fields you need
+                }
+            });
 
-    const totalprice = usercart.items.reduce((acc, item) => {
-      return acc + item.product.price * item.quantity;
-    }, 0);
+        if (!usercart || usercart.items.length === 0) {
+            return res.status(200).json({ groupedByShop: [], grandTotal: 0 });
+        }
 
-    res.status(201).json({ ...usercart.toObject(), totalprice });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error fetching cart", error: error.message });
-  }
+        // 1. Group items by shop and calculate subtotals
+        const groupedByShopMap = usercart.items.reduce((acc, item) => {
+            // Ensure product and shop data exists
+            if (!item.product || !item.product.shop) {
+                return acc;
+            }
+
+            const shopId = item.product.shop._id.toString();
+            const shopName = item.product.shop.name;
+
+            // If we haven't seen this shop yet, initialize it
+            if (!acc[shopId]) {
+                acc[shopId] = {
+                    shopId,
+                    shopName,
+                    items: [],
+                    subtotal: 0
+                };
+            }
+
+            // Add the item to this shop's group
+            acc[shopId].items.push(item);
+            
+            // Add to this shop's subtotal
+            acc[shopId].subtotal += item.product.price * item.quantity;
+            
+            return acc;
+        }, {});
+
+        // 2. Convert the map object to an array
+        const groupedByShopArray = Object.values(groupedByShopMap);
+
+        // 3. Calculate the grand total
+        const grandTotal = groupedByShopArray.reduce((total, shop) => total + shop.subtotal, 0);
+
+        // 4. Send the new, structured response
+        res.status(200).json({
+            groupedByShop: groupedByShopArray,
+            grandTotal: grandTotal
+        });
+
+    } catch (error) {
+        console.error("Error fetching cart:", error);
+        res.status(500).json({ message: "Error fetching cart", error: error.message });
+    }
 };
 
 export const addtocart = async (req, res) => {

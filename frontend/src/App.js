@@ -11,11 +11,20 @@ import ShopPage from './pages/shoppage';
 // import CartPage from './pages/cartpage';
 import UserDashboard from './pages/userdashboard';
 import ProtectedRoute from './components/Protectedroutes';
+import CartPage from './pages/cartpage';
+import ProfilePage from './pages/profilepage';
+import { Toaster } from 'react-hot-toast';
+import OrderHistoryPage from './pages/userhistory';
+import ShopOwnerDashboard from './pages/shopdashboard';
+import OrderCard from './components/ordercard';
 
 
 function App() {
+  
+
   return (
      <BrowserRouter>
+     <Toaster position='top-right'/>
       <Routes>
         <Route path="/" element={<LoginPage/>}/>
         <Route path="/register" element={<RegistrationPage/>} />
@@ -26,6 +35,15 @@ function App() {
           <ShopPage/>
         </ProtectedRoute>}/>
 
+        <Route path="/cart" element={<ProtectedRoute>
+          <CartPage/>
+        </ProtectedRoute>}/>
+          
+           <Route path="/profile" element={<ProtectedRoute><ProfilePage/></ProtectedRoute>} />
+           <Route path='/orders' element={<ProtectedRoute><OrderHistoryPage/></ProtectedRoute>}/>
+           <Route path='shop/dashboard' element={<ProtectedRoute><ShopOwnerDashboard/></ProtectedRoute>}/>
+           
+            
       </Routes>
     </BrowserRouter>
   );
