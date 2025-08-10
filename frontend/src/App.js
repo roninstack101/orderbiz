@@ -41,7 +41,7 @@ function App() {
           
            <Route path="/profile" element={<ProtectedRoute><ProfilePage/></ProtectedRoute>} />
            <Route path='/orders' element={<ProtectedRoute><OrderHistoryPage/></ProtectedRoute>}/>
-           <Route path='shop/dashboard' element={<ProtectedRoute><ShopOwnerDashboard/></ProtectedRoute>}/>
+           <Route path="/shopdashboard" element={<ProtectedRoute><ShopOwnerDashboard/></ProtectedRoute>}/>
            
             
       </Routes>

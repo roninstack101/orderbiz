@@ -1,5 +1,5 @@
 import express from 'express';
-import { acceptorder, checkoutFromCart, getMyOrders, getorderbystatus, rejectorder } from '../controller/order_controller.js';
+import { acceptorder, checkoutFromCart, getMyOrders, getorderbystatus, rejectorder, scannedorder } from '../controller/order_controller.js';
 import { authenticateUser } from '../middleware/authMiddleware.js';
 
 const router =  express.Router();
@@ -13,5 +13,7 @@ router.put("/accept/:orderId",authenticateUser, acceptorder);
 router.put("/reject/:orderId",authenticateUser, rejectorder);
 
 router.get('/myorders', authenticateUser, getMyOrders);
+
+router.get("/:id", scannedorder);
 
 export default router;

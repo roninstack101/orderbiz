@@ -17,7 +17,7 @@ export const getproductsbyshop = async (req,res) => {
 export const createProduct = async (req, res) => {
   try {
     const { shop, name, description, price, quantity, category } = req.body;
-    const image = req.file ? req.file.path : ""; // Cloudinary URL
+    const image = req.file ? req.file.path : ""; 
 
     if (!shop || !name || !price || !quantity) {
       return res.status(400).json({ message: "Missing required fields" });
@@ -69,7 +69,7 @@ export const updateproduct = async (req, res) => {
   const updates = req.body;
 
   if (req.file) {
-    updates.image = req.file.path; // Cloudinary URL
+    updates.image = req.file.path; 
   }
 
   try {
@@ -90,6 +90,33 @@ export const updateproduct = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       message: "Error updating product",
+      error: error.message,
+    });
+  }
+};
+
+
+
+export const toggleProductAvailability = async (req, res) => {
+  try {
+    const { productId } = req.params;
+    const product = await Product.findById(productId);
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+  
+    product.isAvailable = !product.isAvailable;
+    await product.save();
+
+    res.status(200).json({
+      message: `Product marked as ${product.isAvailable ? "available" : "unavailable"}`,
+      product: product,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error toggling product availability",
       error: error.message,
     });
   }

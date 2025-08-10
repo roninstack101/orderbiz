@@ -26,40 +26,43 @@ export default function LoginPage() {
 
   
 
- const handleLogin = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await axios.post("http://localhost:4000/api/users/login", {
-        email,
-        password,
-      });
+const handleLogin = async (e) => {
+  e.preventDefault();
+  try {
+    const res = await axios.post("http://localhost:4000/api/users/login", {
+      email,
+      password,
+    });
 
-      toast.success(res.data.message);
+    toast.success(res.data.message);
+    const { token, user } = res.data;
+    
+    // Store user information with shopId
+    localStorage.setItem("user", JSON.stringify({
+      name: user.name,
+      email: user.email,
+      role: user.role, 
+      shopId: user.shopId, // Changed from user.shop to user.shopId
+      userId: user.userId
+    }));
+    
+    localStorage.setItem("token", token);
 
-      setemail("");
-      setpassword("");
-
-      const { token, user } = res.data;
-      // console.log( token);
-      localStorage.setItem("role", user.role);
-      localStorage.setItem("token", token);
-    localStorage.setItem("userid", user.userId);
-
-       if (token && user.role) {
+    if (token && user.role) {
       if (user.role === "admin") {
         navigate("/admin/dashboard");
       } else if (user.role === "shop_owner") {
-        navigate("/shop/dashboard");
+        navigate("/shopdashboard");
       } else {
         navigate("/user/dashboard");
       }
     } else {
-      alert("Invalid login data received.");
+      toast.error("Invalid login data received.");
     }
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Login failed.");
-    }
-  };
+  } catch (err) {
+    toast.error(err.response?.data?.message || "Login failed.");
+  }
+};
   return (
     <div className="min-h-screen flex items-center justify-center px-4"  style={{
     background: "linear-gradient(139deg, rgba(255, 255, 255, 1) 8%, rgba(0, 103, 216, 1) 84%)",

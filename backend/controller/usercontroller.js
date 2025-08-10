@@ -51,7 +51,7 @@ export const loginuser = async (req,res) => {
             name: user.name,
             role: user.role,
             email: user.email,
-            shop: user.shop 
+            shopId : user.shopRequest.shopId
         },
         token
     });
@@ -102,3 +102,4 @@ export const updateUserProfile = async (req, res) => {
     res.status(500).json({ message: "Failed to update profile", error: err.message });
   }
 };
+  
