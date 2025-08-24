@@ -82,29 +82,35 @@ export default function CartPage() {
     return (
         <div className="min-h-screen bg-gray-50">
             {/* Responsive Header */}
-            <div className="flex justify-between items-center bg-[#0067D8] py-3 px-4 md:py-4 md:px-6 z-20">
-                <h1 className="text-white font-bold text-xl sm:text-2xl md:text-3xl">OrderBiz</h1>
-                <div className="relative group">
-                    <UserCircle className="w-5 h-5 sm:w-6 sm:h-6 text-white cursor-pointer" />
-                    <div className="absolute right-0 mt-2 w-32 sm:w-40 bg-white rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-30">
-                        <a
-                            href="/profile"
-                            className="block px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm hover:bg-gray-100"
-                        >
-                            Profile
-                        </a>
-                        <button
-                            onClick={() => {
-                                localStorage.clear();
-                                navigate("/");
-                            }}
-                            className="block w-full text-left px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm hover:bg-gray-100"
-                        >
-                            Logout
-                        </button>
-                    </div>
-                </div>
+            <header className="bg-gradient-to-r from-blue-600 to-blue-800 shadow-md py-4 px-6 flex justify-between items-center sticky top-0 z-30">
+        <h1 className="text-white font-bold text-2xl">OrderBiz</h1>
+        
+        <div className="flex items-center gap-4">
+         
+          <div className="relative group">
+            <button className="text-white p-1 rounded-full hover:bg-blue-700 transition-colors">
+              <UserCircle size={26} />
+            </button>
+            <div className="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 border border-gray-100">
+              <a
+                href="/profile"
+                className="block px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 border-b border-gray-100"
+              >
+                Profile
+              </a>
+              <button
+                onClick={() => {
+                  localStorage.clear();
+                  navigate("/");
+                }}
+                className="block w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+              >
+                Logout
+              </button>
             </div>
+          </div>
+        </div>
+      </header>
             
             <div className="p-3 sm:p-4 md:p-6 lg:p-8">
                 <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 text-gray-800">Your Cart</h2>

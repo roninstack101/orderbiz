@@ -17,6 +17,9 @@ import { Toaster } from 'react-hot-toast';
 import OrderHistoryPage from './pages/userhistory';
 import ShopOwnerDashboard from './pages/shopdashboard';
 import OrderCard from './components/ordercard';
+import Navbar from './components/Navbar';
+import AdminDashboard from './pages/admindashboard';
+import PasswordUpdatePage from './pages/updatepasswordpage';
 
 
 function App() {
@@ -43,7 +46,9 @@ function App() {
            <Route path='/orders' element={<ProtectedRoute><OrderHistoryPage/></ProtectedRoute>}/>
            <Route path="/shopdashboard" element={<ProtectedRoute><ShopOwnerDashboard/></ProtectedRoute>}/>
            
-            
+         <Route path="/admindashboard" element={<AdminDashboard />} />   
+
+         <Route path='/reset-password' element={<PasswordUpdatePage />} />
       </Routes>
     </BrowserRouter>
   );

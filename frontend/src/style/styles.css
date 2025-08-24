@@ -1,0 +1,15 @@
+.shop-banner-container {
+  aspect-ratio: 16/9;
+  overflow: hidden;
+}
+
+.shop-banner-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.shop-card:hover .shop-banner-image {
+  transform: scale(1.05);
+}

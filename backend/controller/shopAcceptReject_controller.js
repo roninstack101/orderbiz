@@ -2,6 +2,7 @@ import Shoprequest from "../models/shoprequest.model.js";
 import Shop from "../models/shops.model.js";
 import User from "../models/users.model.js";
 import { geocodeAddress } from "../utils/geocodeaddress.js";
+import { sendShopApprovalEmail, sendShopRejectionEmail } from "../utils/emailservice.js";
 
 
 export const getShopRequest = async (req,res) => {
@@ -33,11 +34,7 @@ export const shopApproval = async (req, res) => {
       shopRequest: { isRequested: true },
     });
 
-    // // 2. 🔄 Geocode the shop address
-    // const geo = await geocodeAddress(request.shop.address);
-    // if (!geo) {
-    //   return res.status(400).json({ message: "Invalid shop address" });
-    // }
+ 
 
     // 3. Create the shop
     const shop = new Shop({
@@ -60,6 +57,9 @@ export const shopApproval = async (req, res) => {
     // 5. Delete the shop request
     await Shoprequest.findByIdAndDelete(requestId);
 
+
+    await sendShopApprovalEmail(user.email, user.name, shop.name);
+
     res.status(200).json({ message: "Request approved and user/shop created" });
   } catch (error) {
     console.error("Shop approval error:", error);
@@ -74,6 +74,8 @@ export const ShopDecline = async (req,res) => {
     try {
         const deleted = await Shoprequest.findByIdAndDelete(requestId);
         if(!deleted) return res.status(404).json({ message: "Request not found" });
+
+        await sendShopRejectionEmail(deleted.email, deleted.name, deleted.shop.name, "Shop request declined");
 
           res.status(200).json({ message: "Shop request rejected and deleted" });
   } catch (err) {

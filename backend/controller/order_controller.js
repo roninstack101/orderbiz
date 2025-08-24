@@ -20,13 +20,21 @@ export const checkoutFromCart = async (req, res) => {
 
         // 2. Group all cart items by their shop ID
         const ordersByShop = cart.items.reduce((acc, cartItem) => {
-            const shopId = cartItem.product.shop.toString();
-            if (!acc[shopId]) {
-                acc[shopId] = [];
-            }
-            acc[shopId].push(cartItem);
-            return acc;
-        }, {});
+    const product = cartItem.product;
+
+    // Skip if product reference is missing
+    if (!product) {
+        console.warn(`Product missing for cart item ${cartItem._id}, skipping...`);
+        return acc;
+    }
+
+    const shopId = product.shop.toString();
+    if (!acc[shopId]) {
+        acc[shopId] = [];
+    }
+    acc[shopId].push(cartItem);
+    return acc;
+}, {});
 
         // 3. Create a separate order for each shop
         const createdOrders = [];

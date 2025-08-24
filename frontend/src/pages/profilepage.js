@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { UserCircle, Store, Edit3, Camera, ArrowLeft, MoreVertical, User } from "lucide-react";
+import { UserCircle, Store, Edit3, Camera, ArrowLeft, MoreVertical, User, Mail, Phone, Upload, Save, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -20,7 +20,7 @@ export default function ProfilePage() {
                 const token = localStorage.getItem("token");
                 if (!token) {
                     setLoading(false);
-                    return; // No token, stop execution
+                    return;
                 }
                 const config = { headers: { Authorization: `Bearer ${token}` } };
                 const res = await axios.get("http://localhost:4000/api/users/profile", config);
@@ -53,7 +53,7 @@ export default function ProfilePage() {
             const res = await axios.put("http://localhost:4000/api/users/profile", formData, config);
             setUser(prev => ({ ...prev, ...res.data.user }));
             setIsEditing(false);
-            alert("Profile updated!");
+            alert("Profile updated successfully!");
         } catch (err) {
             alert("Failed to update profile.");
         }
@@ -74,7 +74,7 @@ export default function ProfilePage() {
             const res = await axios.patch(`http://localhost:4000/api/shop/image/${shop._id}`, uploadData, config);
             setShop(res.data.shop);
             setShopImageFile(null);
-            alert("Shop image updated!");
+            alert("Shop image updated successfully!");
         } catch (err) {
             alert("Failed to upload image.");
         }
@@ -91,36 +91,42 @@ export default function ProfilePage() {
     };
 
     const SkeletonLoader = () => (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-pulse">
-            <div className="bg-white p-6 rounded-lg shadow-md h-96">
-                 <div className="h-32 bg-gray-200 rounded-t-lg"></div>
-                 <div className="h-28 w-28 bg-gray-300 rounded-full mx-auto -mt-12 border-4 border-white"></div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-pulse">
+            <div className="bg-white p-8 rounded-2xl shadow-lg h-96">
+                 <div className="h-32 bg-gray-200 rounded-t-2xl"></div>
+                 <div className="h-28 w-28 bg-gray-300 rounded-full mx-auto -mt-14 border-4 border-white"></div>
                  <div className="h-6 bg-gray-200 rounded w-3/4 mx-auto mt-4"></div>
                  <div className="h-4 bg-gray-200 rounded w-1/2 mx-auto mt-2"></div>
             </div>
-             <div className="bg-white p-6 rounded-lg shadow-md h-96">
+             <div className="bg-white p-8 rounded-2xl shadow-lg h-96">
                  <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
-                 <div className="h-40 bg-gray-200 rounded"></div>
+                 <div className="h-40 bg-gray-200 rounded-xl"></div>
             </div>
         </div>
     );
     
     return (
-        <div className="min-h-screen bg-gray-100">
-            <header className="bg-[#0067D8] shadow-sm sticky top-0 z-10 p-4 flex items-center justify-between">
-                <button onClick={() => navigate(-1)} className="p-2 rounded-full hover:bg-gray-100">
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
+            <header className="bg-gradient-to-r from-blue-600 to-indigo-700 shadow-md sticky top-0 z-10 p-4 flex items-center justify-between">
+                <button 
+                    onClick={() => navigate(-1)} 
+                    className="p-2 rounded-full hover:bg-blue-500 transition-colors"
+                >
                     <ArrowLeft size={24} color="#fff" />
                 </button>
                 <h1 className="text-xl text-white font-bold">Profile</h1>
                 <div className="relative">
-                    <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 rounded-full hover:bg-gray-100">
+                    <button 
+                        onClick={() => setIsMenuOpen(!isMenuOpen)} 
+                        className="p-2 rounded-full hover:bg-blue-500 transition-colors"
+                    >
                         <MoreVertical size={24} color="#fff" />
                     </button>
                     {isMenuOpen && (
-                        <div className="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg py-1">
+                        <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-20 border border-gray-200">
                             <button
                                 onClick={handleLogout}
-                                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                className="block w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
                             >
                                 Logout
                             </button>
@@ -130,81 +136,160 @@ export default function ProfilePage() {
             </header>
 
             <main className="max-w-6xl mx-auto py-8 px-4">
-                {loading ? <SkeletonLoader /> : !user ? <div className="text-center text-gray-500">Could not load profile.</div> : (
-                    <div className="grid grid-cols-1  gap-8">
-                        {/* --- User Profile Card (Left Side) --- */}
-                        <div className="bg-white rounded-lg shadow-md overflow-hidden h-fit">
-                            <div className="h-32 bg-gray-200"></div>
-                            <div className="p-6 bg-slate-300">
-                                <div className="relative">
-                                    <div className="absolute -top-24 left-1/2 -translate-x-1/2">
-                                        <div className="w-28 h-28 bg-gray-300 rounded-full border-4 border-white flex items-center justify-center">
-                                            <UserCircle size={80} className="text-gray-500" />
+                {loading ? <SkeletonLoader /> : !user ? (
+                    <div className="text-center text-gray-500 bg-white p-8 rounded-2xl shadow-lg">
+                        Could not load profile. Please try again.
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        {/* User Profile Card */}
+                        <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+                            <div className="h-32 bg-gradient-to-r from-blue-500 to-indigo-600"></div>
+                            <div className="px-8 pb-8">
+                                <div className="relative flex justify-center">
+                                    <div className="absolute -top-16">
+                                        <div className="w-32 h-32 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full border-4 border-white flex items-center justify-center shadow-md">
+                                            <UserCircle size={80} className="text-indigo-400" />
                                         </div>
                                     </div>
                                 </div>
                                 
-                                <form onSubmit={handleUserUpdate} className="mt-16 space-y-4">
+                                <form onSubmit={handleUserUpdate} className="mt-20 space-y-6">
                                     <div className="flex justify-between items-center">
-                                    <h2 className="text-xl font-bold text-gray-700 flex items-center gap-2 ">
-                                    <User className="text-blue-500" /> User Details
-                                </h2>
-                                        {!isEditing && (
-                                            <button type="button" onClick={() => setIsEditing(true)} className="flex items-center gap-2 text-sm font-semibold text-blue-500 hover:text-blue-700">
-                                                <Edit3 size={16} /> Edit Profile
+                                        <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-3">
+                                            <User className="text-blue-600" size={28} /> User Details
+                                        </h2>
+                                        {!isEditing ? (
+                                            <button 
+                                                type="button" 
+                                                onClick={() => setIsEditing(true)} 
+                                                className="flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium transition-colors"
+                                            >
+                                                <Edit3 size={18} /> Edit Profile
+                                            </button>
+                                        ) : (
+                                            <button
+                                                type="button"
+                                                onClick={handleCancelEdit}
+                                                className="flex items-center gap-2 text-gray-500 hover:text-gray-700 transition-colors"
+                                            >
+                                                <X size={18} /> Cancel
                                             </button>
                                         )}
                                     </div>
-                                    <div>
-                                        <label className="text-sm font-medium text-gray-500">Name</label>
-                                        <input name="name" value={formData.name} onChange={handleChange} readOnly={!isEditing} className="w-full text-lg font-semibold text-gray-800 p-2 mt-1 border rounded-md read-only:bg-gray-100 read-only:border-transparent focus:bg-white focus:border-gray-300 focus:ring-2 focus:ring-blue-500" />
+                                    
+                                    <div className="space-y-1">
+                                        <label className="text-sm font-medium text-gray-600 flex items-center gap-2">
+                                            <User size={16} /> Name
+                                        </label>
+                                        <input 
+                                            name="name" 
+                                            value={formData.name} 
+                                            onChange={handleChange} 
+                                            readOnly={!isEditing} 
+                                            className="w-full p-3 text-gray-800 mt-1 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all read-only:bg-gray-50 read-only:cursor-not-allowed" 
+                                        />
                                     </div>
-                                    <div>
-                                        <label className="text-sm font-medium text-gray-500">Email</label>
-                                        <input name="email" value={formData.email} onChange={handleChange} readOnly={!isEditing} className="w-full text-lg text-gray-800 p-2 mt-1 border rounded-md read-only:bg-gray-100 read-only:border-transparent focus:bg-white focus:border-gray-300 focus:ring-2 focus:ring-blue-500" />
+                                    
+                                    <div className="space-y-1">
+                                        <label className="text-sm font-medium text-gray-600 flex items-center gap-2">
+                                            <Mail size={16} /> Email
+                                        </label>
+                                        <input 
+                                            name="email" 
+                                            value={formData.email} 
+                                            onChange={handleChange} 
+                                            readOnly={!isEditing} 
+                                            className="w-full p-3 text-gray-800 mt-1 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all read-only:bg-gray-50 read-only:cursor-not-allowed" 
+                                        />
                                     </div>
-                                    <div>
-                                        <label className="text-sm font-medium text-gray-500">Phone</label>
-                                        <input name="phone" value={formData.phone} onChange={handleChange} readOnly={!isEditing} className="w-full text-lg text-gray-800 p-2 mt-1 border rounded-md read-only:bg-gray-100 read-only:border-transparent focus:bg-white focus:border-gray-300 focus:ring-2 focus:ring-blue-500" />
+                                    
+                                    <div className="space-y-1">
+                                        <label className="text-sm font-medium text-gray-600 flex items-center gap-2">
+                                            <Phone size={16} /> Phone
+                                        </label>
+                                        <input 
+                                            name="phone" 
+                                            value={formData.phone} 
+                                            onChange={handleChange} 
+                                            readOnly={!isEditing} 
+                                            className="w-full p-3 text-gray-800 mt-1 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all read-only:bg-gray-50 read-only:cursor-not-allowed" 
+                                        />
                                     </div>
+                                    
                                     {isEditing && (
-                                        <div className="flex gap-4 pt-4">
-                                            <button type="submit" className="bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg hover:bg-blue-700">Update</button>
-                                            <button type="button" onClick={handleCancelEdit} className="bg-gray-200 py-2 px-6 rounded-lg hover:bg-gray-300">Cancel</button>
-                                        </div>
+                                        <button 
+                                            type="submit" 
+                                            className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium py-3 rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all shadow-md flex items-center justify-center gap-2"
+                                        >
+                                            <Save size={18} /> Update Profile
+                                        </button>
                                     )}
                                 </form>
                             </div>
                         </div>
 
-                        {/* --- Shop Details Card (Right Side) --- */}
+                        {/* Shop Details Card */}
                         {user.role === "shop_owner" && shop && (
-                             <div className="bg-slate-300 p-6 rounded-lg shadow-md">
-                                <h2 className="text-xl font-bold text-gray-700 flex items-center gap-2 mb-4">
-                                    <Store className="text-blue-500" /> Shop Details
+                            <div className="bg-white rounded-2xl shadow-lg p-8">
+                                <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-3 mb-6">
+                                    <Store className="text-blue-600" size={28} /> Shop Details
                                 </h2>
-                                <div className="space-y-4">
-                                    <div>
+                                
+                                <div className="space-y-6">
+                                    <div className="space-y-1">
                                         <label className="text-sm font-medium text-gray-600">Shop Name</label>
-                                        <p className="w-full p-2 mt-1 bg-gray-100 rounded-md border border-gray-200">{shop.name}</p>
-                                    </div>
-                                    <div>
-                                        <label className="text-sm font-medium text-gray-600">Category</label>
-                                        <p className="w-full p-2 mt-1 bg-gray-100 rounded-md border border-gray-200">{shop.category}</p>
-                                    </div>
-                                    <div className="relative group">
-                                        <img src={shopImageFile ? URL.createObjectURL(shopImageFile) : (shop.image || 'https://via.placeholder.com/300')} alt="shop" className="w-full h-48 object-cover rounded-lg" />
-                                        <button onClick={() => fileInputRef.current.click()} className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <Camera size={32} />
-                                        </button>
-                                    </div>
-                                    <input type="file" ref={fileInputRef} onChange={(e) => setShopImageFile(e.target.files[0])} accept="image/*" className="hidden" />
-                                    {shopImageFile && (
-                                        <div className="text-center">
-                                            <p className="text-sm text-gray-600 truncate mb-2">{shopImageFile.name}</p>
-                                            <button onClick={handleImageUpdate} className="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700">Upload New Image</button>
+                                        <div className="w-full p-3 mt-1 bg-gray-50 rounded-xl border border-gray-200 text-gray-800">
+                                            {shop.name}
                                         </div>
-                                    )}
+                                    </div>
+                                    
+                                    <div className="space-y-1">
+                                        <label className="text-sm font-medium text-gray-600">Category</label>
+                                        <div className="w-full p-3 mt-1 bg-gray-50 rounded-xl border border-gray-200 text-gray-800">
+                                            {shop.category}
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="space-y-4">
+                                        <label className="text-sm font-medium text-gray-600">Shop Image</label>
+                                        <div className="relative group rounded-xl overflow-hidden border-2 border-dashed border-gray-300 hover:border-blue-400 transition-colors">
+                                            <img 
+                                                src={shopImageFile ? URL.createObjectURL(shopImageFile) : (shop.image || 'https://via.placeholder.com/300x200?text=Shop+Image')} 
+                                                alt={shop.name} 
+                                                className="w-full h-48 object-cover" 
+                                            />
+                                            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all cursor-pointer">
+                                                <button 
+                                                    type="button"
+                                                    onClick={() => fileInputRef.current.click()} 
+                                                    className="flex items-center gap-2 text-white bg-blue-600 bg-opacity-80 hover:bg-opacity-100 px-4 py-2 rounded-lg transition-all"
+                                                >
+                                                    <Camera size={20} /> Change Image
+                                                </button>
+                                            </div>
+                                        </div>
+                                        
+                                        <input 
+                                            type="file" 
+                                            ref={fileInputRef} 
+                                            onChange={(e) => setShopImageFile(e.target.files[0])} 
+                                            accept="image/*" 
+                                            className="hidden" 
+                                        />
+                                        
+                                        {shopImageFile && (
+                                            <div className="text-center space-y-3">
+                                                <p className="text-sm text-gray-600 truncate">{shopImageFile.name}</p>
+                                                <button 
+                                                    onClick={handleImageUpdate} 
+                                                    className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium py-3 rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all shadow-md flex items-center justify-center gap-2"
+                                                >
+                                                    <Upload size={18} /> Upload Image
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         )}

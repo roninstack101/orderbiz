@@ -15,6 +15,7 @@ export const getproductsbyshop = async (req,res) => {
 
 
 export const createProduct = async (req, res) => {
+  console.log("createProduct triggered");
   try {
     const { shop, name, description, price, quantity, category } = req.body;
     const image = req.file ? req.file.path : ""; 

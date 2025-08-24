@@ -12,7 +12,7 @@
         useEffect(() => {
             const fetchOrders = async () => {
                 try {
-                    // Manually get token and create config object
+                    
                     const token = localStorage.getItem("token");
                     console.log(token);
                     if (!token) {
@@ -23,7 +23,6 @@
                         headers: { Authorization: `Bearer ${token}` }
                     };
 
-                    // Use axios with the full URL and config
                     const res = await axios.get('http://localhost:4000/api/order/myorders', config);
                     setOrders(res.data);
                 } catch (err) {

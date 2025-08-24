@@ -12,6 +12,8 @@ import cartroutes from '../backend/routes/cartroutes.js';
 import shoproutes from '../backend/routes/shoproutes.js'
 // import productroutes from '../backend/routes/productroutes.js'
 import orderroutes from '../backend/routes/orderroutes.js'
+import adminroutes from './routes/adminroutes.js';
+import otproutes from './routes/otproutes.js';
 const app = express();
 
 
@@ -42,6 +44,10 @@ app.use('/api/product', productroutes)
 app.use('/api/order', orderroutes)
 
 app.use('/api/shop', shoproutes)
+
+app.use('/api/admin', adminroutes)
+
+app.use('/api/otp', otproutes)
 
 // console.log(process.env.MONGO_URI);
 

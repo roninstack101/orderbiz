@@ -1,6 +1,9 @@
 import Shop from "../models/shops.model.js";
 
+
+//get categories from shops
 export const getcategory = async (req,res) => {
+  // console.log("getcategory triggered");
     try {
         const categories= await Shop.distinct('category');
         res.status(200).json(categories);
@@ -11,7 +14,10 @@ export const getcategory = async (req,res) => {
     
 }
 
+
+//get shops by category
 export const getShopsByCategory = async (req, res) => {
+  // console.log("getShopsByCategory triggered");
   const { category } = req.params;
 
   try {
@@ -22,9 +28,13 @@ export const getShopsByCategory = async (req, res) => {
   }
 }
 
-export const getAllshops = async (req,res) => {
+
+//get all shops.......temporary
+export const getAllshops = async (req, res) => {
+
+  console.log("getAllshops triggered");
   try {
-    const shops = await Shop.find();
+    const shops = await Shop.find({}).populate('owner', 'name email phone');
     res.status(200).json(shops);
   } catch (error) {
      res.status(500).json({ message: 'Failed to get shops', error: error.message });
@@ -32,10 +42,10 @@ export const getAllshops = async (req,res) => {
   
 };
 
-
-// controllers/shopController.js
-// import Shop from '../models/Shop.js';
+//get nearby shops
 export const getNearbyShops = async (req, res) => {
+  console.log("getNearbyShops triggered");
+
     const { lat, lng, distance = 5000 } = req.query;
 
     
@@ -45,6 +55,7 @@ export const getNearbyShops = async (req, res) => {
     }
 
     try {
+        // console.log("getNearbyShops triggered");
         const shops = await Shop.find({
             isApproved: true,
             location: {
@@ -54,10 +65,10 @@ export const getNearbyShops = async (req, res) => {
                         type: "Point",
                         coordinates: [parseFloat(lng), parseFloat(lat)],
                     },
-                    $maxDistance: parseInt(distance), // in meters
+                    $maxDistance: parseInt(distance),
                 },
             },
-        });
+        }).populate('owner', 'name email phone');
 
         res.status(200).json(shops);
     } catch (err) {
@@ -68,6 +79,7 @@ export const getNearbyShops = async (req, res) => {
 
 
 export const getshopbyid = async (req, res) => {
+  // console.log("getshopbyid triggered");
   try {
     const shop = await Shop.findById(req.params.id);
     if (!shop) return res.status(404).json({ message: "Shop not found" });
