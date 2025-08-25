@@ -1,13 +1,16 @@
 import Shoprequest from "../models/shoprequest.model.js";
 import bcrypt from "bcryptjs";
+import { sendShopRequestAcknowledgementEmail } from "../utils/emailservice.js";
 
+
+//submit shop request.....in shoprequest table
 export const submitShoprequest = async (req, res) => {
     const { name, email, phone, password, shop } = req.body;
 
-    // 1. ✅ Destructure latitude and longitude from the nested shop object
+   
     const { latitude, longitude } = shop;
 
-    // 2. ✅ Validate that the coordinates exist
+    
     if (!latitude || !longitude) {
         return res.status(400).json({ message: 'Shop location coordinates are required.' });
     }
@@ -20,7 +23,7 @@ export const submitShoprequest = async (req, res) => {
 
         const hashedpassword = await bcrypt.hash(password, 10);
         
-        // 3. ✅ Manually construct the new request with the correct GeoJSON format
+       
         const request = new Shoprequest({
             name,
             email,
@@ -33,15 +36,14 @@ export const submitShoprequest = async (req, res) => {
                 description: shop.description,
                 location: {
                     type: 'Point',
-                    // Remember: [longitude, latitude]
                     coordinates: [longitude, latitude] 
                 }
             }
         });
 
         await request.save();
-        
-        // Use 201 for successful creation
+
+       await sendShopRequestAcknowledgementEmail(email, name, shop.name);
         res.status(201).json({ message: 'Shop registration request submitted for approval' });
         
     } catch (error) {

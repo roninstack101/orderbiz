@@ -15,7 +15,7 @@ export const sendPasswordResetEmail = async (email, resetToken) => {
     const transporter = createTransporter();
     const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
     const mailOptions = {
-      from: process.env.EMAIL_USER,
+      from:`"OrderBiz" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: "Password Reset Request",
       html: ` 
@@ -37,7 +37,7 @@ export const sendOTPEmail = async (email, otp) => {
   try {
     const transporter = createTransporter();
     const mailOptions = {
-      from: process.env.EMAIL_USER,
+      from:`"OrderBiz" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: "Your Verification OTP",
       html: ` 
@@ -58,7 +58,7 @@ export const sendWelcomeEmail = async (email, name) => {
   try {
     const transporter = createTransporter();
     const mailOptions = {
-      from: process.env.EMAIL_USER,
+      from:`"OrderBiz" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: "Welcome to Our Platform",
       html: ` 
@@ -88,7 +88,7 @@ export const sendPasswordResetConfirmation = async (email) => {
   try {
     const transporter = createTransporter();
     const mailOptions = {
-      from: process.env.EMAIL_USER,
+      from: `"OrderBiz" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: "Password Reset Successful",
       html: ` 
@@ -157,5 +157,35 @@ export const sendShopRejectionEmail = async (email, ownerName, shopName, reason)
   } catch (error) {
     console.error("Error sending shop rejection email:", error);
     throw new Error("Failed to send shop rejection email");
+  }
+};
+
+
+export const sendShopRequestAcknowledgementEmail = async (email, ownerName, shopName) => {
+  try {
+    const transporter = createTransporter();
+    const mailOptions = {
+      from: `"OrderBiz" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: `Your OrderBiz Shop Request for "${shopName}" is Under Review`,
+      html: `
+        <h2>We've Received Your Request!</h2>
+        <p>Dear ${ownerName},</p>
+        <p>Thank you for submitting your request to register "<b>${shopName}</b>" on the OrderBiz platform. We're excited about the possibility of you joining our community!</p>
+        
+        <p><b>What happens next?</b></p>
+        <p>Our team is now carefully reviewing your application to ensure it meets our platform's standards. This process typically takes <strong>2-3 business days</strong>.</p>
+        <p>You will receive another email from us as soon as your shop has been approved or if we require any further information from you.</p>
+        <p>There is no further action required from you at this time.</p>
+        <br />
+        <p><b>Best Regards,</b></p>
+        <p><b>The OrderBiz Team</b></p>
+      `,
+    };
+    await transporter.sendMail(mailOptions);
+    console.log("Shop request acknowledgement email sent successfully");
+  } catch (error) {
+    console.error("Error sending shop request acknowledgement email:", error);
+    throw new Error("Failed to send shop request acknowledgement email");
   }
 };

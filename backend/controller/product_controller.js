@@ -1,11 +1,11 @@
 import Product from "../models/products.model.js";
 
-
+//get products by shop id
 export const getproductsbyshop = async (req,res) => {
     try {
         const shopid = req.params.shopid;
 
-    const products = await Product.find({ shop:shopid });
+    const products = await Product.find({ shop:shopid, isAvailable: true });
     
     res.status(200).json(products);
     } catch (error) {
@@ -13,9 +13,9 @@ export const getproductsbyshop = async (req,res) => {
     }
 }
 
-
+// create product
 export const createProduct = async (req, res) => {
-  console.log("createProduct triggered");
+  // console.log("createProduct triggered");
   try {
     const { shop, name, description, price, quantity, category } = req.body;
     const image = req.file ? req.file.path : ""; 
@@ -49,13 +49,13 @@ export const createProduct = async (req, res) => {
 };
 
 
-
+//delete product
 export const deleteProduct = async (req,res) => {
     try {
         const {productId} = req.params;
         const deleted = await Product.findByIdAndDelete(productId);
         if (!deleted) {
-            return res.status(404).json({message:"Product nod found "})
+            return res.status(404).json({message:"Product not found "})
         }
 
         res.status(201).json({message:"Product deleted successfully", deleted});
@@ -65,6 +65,8 @@ export const deleteProduct = async (req,res) => {
     
 };  
 
+
+//update product
 export const updateproduct = async (req, res) => {
   const { productId } = req.params;
   const updates = req.body;
@@ -97,7 +99,7 @@ export const updateproduct = async (req, res) => {
 };
 
 
-
+// Toggle product availability 
 export const toggleProductAvailability = async (req, res) => {
   try {
     const { productId } = req.params;

@@ -3,6 +3,7 @@ import axios from "axios";
 import image1 from "../assets/image1.png"; 
 import image2 from "../assets/image2.png";
 import image3 from "../assets/image3.png";
+import logo from "../assets/orderbizlogo.png";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
@@ -177,8 +178,9 @@ export default function LoginPage() {
           {!showForgotPassword ? (
             <>
               <div className="text-center mb-2">
-                <h1 className="text-3xl font-bold text-blue-700">Welcome Back</h1>
-                <p className="text-gray-600 mt-2">Sign in to your account</p>
+                {/* <h1 className="text-4xl font-bold text-blue-700 mb-3">OrdeBiz</h1> */}
+                <img src={logo} alt="OrdeBiz Logo" className="xl:w-[16rem] mx-auto w-[14rem] " />
+                <p className="text-gray-600  font-bold ">Sign in to your account</p>
               </div>
               <form className="space-y-5 mt-6" onSubmit={handleLogin}>
                 <div>

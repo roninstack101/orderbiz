@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Minus, Plus, Trash2, UserCircle } from "lucide-react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import logo from "../assets/whitelogo.png"; 
+import toast from "react-hot-toast";
 
 export default function CartPage() {
     const [groupedShops, setGroupedShops] = useState([]);
@@ -68,7 +70,7 @@ export default function CartPage() {
                 { userid: userId }, 
                 config
             );
-            alert(res.data.message);
+            toast.success(res.data.message);
             navigate('/orders');
         } catch(err) {
             alert(err.response?.data?.message || "Checkout failed");
@@ -82,8 +84,9 @@ export default function CartPage() {
     return (
         <div className="min-h-screen bg-gray-50">
             {/* Responsive Header */}
-            <header className="bg-gradient-to-r from-blue-600 to-blue-800 shadow-md py-4 px-6 flex justify-between items-center sticky top-0 z-30">
-        <h1 className="text-white font-bold text-2xl">OrderBiz</h1>
+            <header className="bg-gradient-to-r from-blue-600 to-blue-800 shadow-md py-2 px-6 flex justify-between items-center sticky top-0 z-30">
+        {/* <h1 className="text-white font-bold text-2xl">OrderBiz</h1> */}
+         <img src={logo} alt="OrderBiz Logo" className="w-[8rem]" />
         
         <div className="flex items-center gap-4">
          
@@ -123,7 +126,7 @@ export default function CartPage() {
                     <div className="flex flex-col items-center justify-center h-64 text-center">
                         <div className="text-gray-500 mb-4">Your cart is empty</div>
                         <button 
-                            onClick={() => navigate('/')}
+                            onClick={() => navigate('/user/dashboard')}
                             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
                         >
                             Browse Products

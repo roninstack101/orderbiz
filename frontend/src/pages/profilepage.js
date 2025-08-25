@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { UserCircle, Store, Edit3, Camera, ArrowLeft, MoreVertical, User, Mail, Phone, Upload, Save, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import logo from "../assets/whitelogo.png";
 
 export default function ProfilePage() {
     const [user, setUser] = useState(null);

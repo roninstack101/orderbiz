@@ -4,6 +4,7 @@ import image from "../assets/counter.png";
 import ProductCard from "../components/userproductcard";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import logo from "../assets/whitelogo.png";
 
 export default function ShopPage() {
   const { shopId } = useParams();
@@ -109,8 +110,9 @@ export default function ShopPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-gradient-to-r from-blue-600 to-blue-800 shadow-md py-4 px-6 flex justify-between items-center sticky top-0 z-30">
-        <h1 className="text-white font-bold text-2xl">OrderBiz</h1>
+      <header className="bg-gradient-to-r from-blue-600 to-blue-800 shadow-md py-2 px-6 flex justify-between items-center sticky top-0 z-30">
+        {/* <h1 className="text-white font-bold text-2xl">OrderBiz</h1> */}
+        <img src={logo} alt="OrderBiz Logo" className="w-[8rem]" /> 
         
         <div className="flex items-center gap-4">
          

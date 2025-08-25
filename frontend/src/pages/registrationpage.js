@@ -107,25 +107,24 @@ export default function RegistrationPage() {
   };
 
   const handleOtpChange = (index, value) => {
-    if (!/^\d*$/.test(value)) return; // Only allow numbers
+  if (!/^\d*$/.test(value)) return;
 
-    const newOtp = [...otp];
-    newOtp[index] = value;
-    setOtp(newOtp);
+  const newOtp = [...otp];
+  newOtp[index] = value;
+  setOtp(newOtp);
 
-    // Auto-focus to next input
-    if (value && index < 5) {
-      otpInputRefs.current[index + 1]?.focus();
+  if (value && index < 5) {
+    otpInputRefs.current[index + 1]?.focus();
+  }
+
+  if (index === 5 && value) {
+    const fullOtp = newOtp.join("");
+    if (fullOtp.length === 6) {
+      // Pass the complete OTP string directly as an argument
+      handleVerifyOtp(fullOtp);
     }
-
-    // Auto-submit when all digits are entered
-    if (index === 5 && value) {
-      const fullOtp = newOtp.join("");
-      if (fullOtp.length === 6) {
-        handleVerifyOtp();
-      }
-    }
-  };
+  }
+};
 
   const handleOtpKeyDown = (index, e) => {
     if (e.key === "Backspace" && !otp[index] && index > 0) {
@@ -187,6 +186,11 @@ export default function RegistrationPage() {
   const handlePlaceChanged = () => {
     if (autocompleteRef.current !== null) {
       const place = autocompleteRef.current.getPlace();
+    
+     if (!place || !place.geometry) {
+      console.error("User did not select a prediction from the dropdown.");
+      return;
+    }  
       if (place.geometry && place.geometry.location) {
         const location = place.geometry.location;
         setMarkerPosition({ lat: location.lat(), lng: location.lng() });
@@ -240,36 +244,38 @@ export default function RegistrationPage() {
     }
   };
 
-  const handleVerifyOtp = async () => {
-    const enteredOtp = otp.join("");
-    if (enteredOtp.length !== 6) {
-      toast.error("Please enter a valid 6-digit OTP");
-      return;
-    }
+  // Accept an optional otpString argument
+const handleVerifyOtp = async (otpString) => {
+  // Use the argument if provided, otherwise join the state
+  const enteredOtp = otpString || otp.join("");
 
-    setOtpVerifying(true);
+  if (enteredOtp.length !== 6) {
+    toast.error("Please enter a valid 6-digit OTP");
+    return;
+  }
 
-    try {
-      const response = await axios.post(
-        "http://localhost:4000/api/otp/verify-otp",
-        {
-          email: form.email,
-          otp: enteredOtp,
-        }
-      );
+  setOtpVerifying(true);
 
-      if (response.data.message === "OTP verified successfully") {
-        // Proceed with registration
-        await completeRegistration();
-      } else {
-        toast.error("Invalid OTP. Please try again.");
+  try {
+    const response = await axios.post(
+      "http://localhost:4000/api/otp/verify-otp",
+      {
+        email: form.email,
+        otp: enteredOtp, // Use the correct variable here
       }
-    } catch (error) {
-      toast.error("OTP verification failed. Please try again.");
-    } finally {
-      setOtpVerifying(false);
+    );
+
+    if (response.data.message === "OTP verified successfully") {
+      await completeRegistration();
+    } else {
+      toast.error("Invalid OTP. Please try again.");
     }
-  };
+  } catch (error) {
+    toast.error("OTP verification failed. Please try again.");
+  } finally {
+    setOtpVerifying(false);
+  }
+};
 
   const completeRegistration = async () => {
     setIsSubmitting(true);

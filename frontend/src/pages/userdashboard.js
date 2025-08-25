@@ -3,6 +3,7 @@ import { UserCircle, Funnel, ShoppingCart, History, MapPin, Search, X } from "lu
 import bgImage from "../assets/counter.png";
 import ShopCard from "../components/shopcard";
 import axios from "axios";
+import logo from "../assets/whitelogo.png";
 import { useNavigate } from "react-router-dom";
 
 export default function UserDashboard() {
@@ -90,8 +91,9 @@ export default function UserDashboard() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}
-      <header className="bg-gradient-to-r from-blue-600 to-blue-800 shadow-md py-4 px-6 flex justify-between items-center sticky top-0 z-30">
-        <h1 className="text-white font-bold text-2xl">OrderBiz</h1>
+      <header className="bg-gradient-to-r from-blue-600 to-blue-800 shadow-md py-2 px-6 flex justify-between items-center sticky top-0 z-30">
+        {/* <h1 className="text-white font-bold text-2xl">OrderBiz</h1> */}
+        <img src={logo} alt="OrderBiz Logo" className="w-[8rem]" />
         
         <div className="flex items-center gap-4">
           <button 
